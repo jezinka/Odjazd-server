@@ -18,10 +18,26 @@ public class IndexController {
         List<Departure> departures = new ArrayList<>();
         if (from.equals("work")) {
 
-            departures.add(new Departure(from, "14:17", "14:20", "14:55", "14:57", Arrays.asList("33", "331"), "Bujwida"));
+            departures.add(new Departure.Builder()
+                    .setFrom(from)
+                    .setLeave("14:17")
+                    .setDeparture("14:20")
+                    .setArrival("14:55")
+                    .setOnTheSpot("14:57")
+                    .setBus(Arrays.asList("33", "331"))
+                    .setTransfer("Bujwida")
+                    .build());
+
         } else {
-            departures.add(new Departure(from, "14:21", "14:30", "14:38", "14:40", Collections.singletonList("150"), null));
-            departures.add(new Departure(from, "14:33", "14:41", "14:47", "14:57", Collections.singletonList("D"), null));
+            departures.add(new Departure.Builder()
+                    .setFrom("14:21").setLeave("14:30").setDeparture("14:38")
+                    .setArrival("14:40").setBus(Collections.singletonList("150"))
+                    .build());
+
+            departures.add(new Departure.Builder()
+                    .setFrom(from).setLeave("14:33").setDeparture("14:41")
+                    .setArrival("14:47").setOnTheSpot("14:57").setBus(Collections.singletonList("D"))
+                    .build());
         }
         return departures;
     }
