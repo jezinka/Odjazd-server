@@ -7,14 +7,14 @@ import static org.springframework.http.HttpStatus.OK
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
 
-class OtherControllerTest extends spock.lang.Specification {
+class IndexControllerTest extends spock.lang.Specification {
 
     @Shared
-    MockMvc mockMvc = standaloneSetup(new OtherController()).build()
+    MockMvc mockMvc = standaloneSetup(new IndexController()).build()
 
     def "Home"() {
         when: 'rest account url is hit'
-        def response = mockMvc.perform(get('/groovy')).andReturn().response
+        def response = mockMvc.perform(get('/')).andReturn().response
 
         then:
 
@@ -22,11 +22,7 @@ class OtherControllerTest extends spock.lang.Specification {
         response.status == OK.value()
 
         //Showing how a contains test could work
-        response.contentType.contains('text/plain')
-        response.contentType == 'text/plain;charset=ISO-8859-1'
-
-        //Can test the whole content string that is returned
-        response.contentAsString == 'Hello World!'
-
+        response.contentType.contains('application/json')
+        response.contentType == 'application/json;charset=UTF-8'
     }
 }

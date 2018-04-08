@@ -16,8 +16,8 @@ public class IndexController {
     @RequestMapping("/")
     public List<Departure> index(@RequestParam(name = "from", required = false, defaultValue = "home") String from) {
         List<Departure> departures = new ArrayList<>();
-        if (from.equals("work")) {
 
+        if (from.equals("work")) {
             departures.add(new Departure.Builder()
                     .setFrom(from)
                     .setLeave("14:17")
