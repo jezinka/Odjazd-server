@@ -22,7 +22,4 @@
 /dist/
 /nbdist/
 /.nb-gradle/
-gradlew
-gradlew.bat
 out/
-settings.gradle
