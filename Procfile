@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar odjazd.jar
+web: java $JAVA_OPTS -Dserver.port=$PORT -jar odjazd.jar
