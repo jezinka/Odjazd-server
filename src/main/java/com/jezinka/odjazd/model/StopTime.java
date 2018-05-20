@@ -1,19 +1,25 @@
 package com.jezinka.odjazd.model;
 
-import org.joda.time.LocalTime;
 
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import java.io.Serializable;
+import java.time.LocalTime;
+
+@Entity
 public class StopTime {
 
-    Integer stopId;
-    String tripId;
-    LocalTime departureTime;
+    @EmbeddedId
+    private StopTimePK stopTimeId;
+
+    private LocalTime departureTime;
 
     public String getTripId() {
-        return tripId;
+        return stopTimeId.tripId;
     }
 
     public Integer getStopId() {
-        return stopId;
+        return stopTimeId.stopId;
     }
 
     public LocalTime getDepartureTime() {
@@ -21,22 +27,42 @@ public class StopTime {
     }
 
     public StopTime(String[] s) {
-        this.stopId = Integer.parseInt(s[3]);
-        this.tripId = s[0];
+        this.stopTimeId = new StopTimePK(Integer.parseInt(s[3]), s[0]);
 
         try {
             this.departureTime = LocalTime.parse(s[2]);
         } catch (Exception e) {
-            this.departureTime = new LocalTime(0, Integer.parseInt(s[2].split(":")[1]));
+            this.departureTime = LocalTime.parse("00:" + s[2].split(":")[1]);
         }
     }
 
     @Override
     public String toString() {
         return "StopTime{" +
-                "stopId=" + stopId +
-                ", tripId='" + tripId + '\'' +
+                "stopId=" + getStopId() +
+                ", tripId='" + getTripId() + '\'' +
                 ", departureTime='" + departureTime + '\'' +
                 '}';
+    }
+
+    private static class StopTimePK implements Serializable {
+        private Integer stopId;
+        private String tripId;
+
+        public StopTimePK() {
+        }
+
+        public StopTimePK(Integer stopId, String tripId) {
+            this.stopId = stopId;
+            this.tripId = tripId;
+        }
+
+        public Integer getStopId() {
+            return stopId;
+        }
+
+        public String getTripId() {
+            return tripId;
+        }
     }
 }

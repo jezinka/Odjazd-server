@@ -1,16 +1,18 @@
 package com.jezinka.odjazd.service;
 
-import com.jezinka.odjazd.model.Stop;
 import com.jezinka.odjazd.model.StopTime;
 import com.jezinka.odjazd.model.Trip;
-import org.joda.time.LocalTime;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -67,28 +69,11 @@ public class ZipFileService {
     }
 
     boolean isInInterval(LocalTime departureTime) {
-        LocalTime startTime = new LocalTime(14, 45);
-        LocalTime endTime = new LocalTime(15, 30);
+        LocalTime startTime = LocalTime.parse("14:45");
+        LocalTime endTime = LocalTime.parse("15:30");
 
         return (departureTime.equals(startTime) || departureTime.isAfter(startTime)) &&
                 (departureTime.equals(endTime) || departureTime.isBefore(endTime));
-    }
-
-
-    public List<Stop> findNearestStops(Comparator<Stop> comparing) throws IOException {
-
-        if (comparing == null) {
-            return new ArrayList<>();
-        }
-
-        BufferedReader br = getFromZip(Const.STOPS_TXT);
-        br.readLine();
-
-        return br.lines()
-                .map(s -> new Stop(s.split(Const.SEPARATOR)))
-                .sorted(comparing)
-                .limit(10)
-                .collect(Collectors.toList());
     }
 
     private BufferedReader getFromZip(String fileName) throws IOException {
