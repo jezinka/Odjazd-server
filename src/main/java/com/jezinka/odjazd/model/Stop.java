@@ -11,6 +11,9 @@ public class Stop {
     private String code;
     private String name;
 
+    public Stop() {
+    }
+
     public Stop(String[] splittedLine) {
         this.id = Integer.parseInt(splittedLine[0]);
         this.code = splittedLine[1];

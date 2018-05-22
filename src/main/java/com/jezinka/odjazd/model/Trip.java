@@ -18,6 +18,9 @@ public class Trip {
         return routeId;
     }
 
+    public Trip() {
+    }
+
     public Trip(String[] splittedLine) {
         this.id = splittedLine[2];
         this.routeId = splittedLine[0];

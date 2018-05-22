@@ -1,33 +1,41 @@
 package com.jezinka.odjazd.model;
 
 
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import java.io.Serializable;
+import javax.persistence.Id;
 import java.time.LocalTime;
 
 @Entity
 public class StopTime {
 
-    @EmbeddedId
-    private StopTimePK stopTimeId;
+    @Id
+    private Integer id;
+
+    private Integer stopId;
+
+    private String tripId;
 
     private LocalTime departureTime;
 
     public String getTripId() {
-        return stopTimeId.tripId;
+        return this.tripId;
     }
 
     public Integer getStopId() {
-        return stopTimeId.stopId;
+        return this.stopId;
     }
 
     public LocalTime getDepartureTime() {
         return departureTime;
     }
 
-    public StopTime(String[] s) {
-        this.stopTimeId = new StopTimePK(Integer.parseInt(s[3]), s[0]);
+    public StopTime() {
+    }
+
+    public StopTime(int i, String[] s) {
+        this.id = i;
+        this.stopId = Integer.parseInt(s[3]);
+        this.tripId = s[0];
 
         try {
             this.departureTime = LocalTime.parse(s[2]);
@@ -43,26 +51,5 @@ public class StopTime {
                 ", tripId='" + getTripId() + '\'' +
                 ", departureTime='" + departureTime + '\'' +
                 '}';
-    }
-
-    private static class StopTimePK implements Serializable {
-        private Integer stopId;
-        private String tripId;
-
-        public StopTimePK() {
-        }
-
-        public StopTimePK(Integer stopId, String tripId) {
-            this.stopId = stopId;
-            this.tripId = tripId;
-        }
-
-        public Integer getStopId() {
-            return stopId;
-        }
-
-        public String getTripId() {
-            return tripId;
-        }
     }
 }
