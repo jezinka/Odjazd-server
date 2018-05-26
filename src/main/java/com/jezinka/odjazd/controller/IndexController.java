@@ -36,12 +36,14 @@ public class IndexController {
 
         } else {
             departures.add(new Departure.Builder()
-                    .setFrom("14:21").setLeave("14:30").setDeparture("14:38")
-                    .setArrival("14:40").setBus(Collections.singletonList("150"))
+                    .setFrom(from)
+                    .setLeave("14:21").setDeparture("14:30").setArrival("14:38")
+                    .setOnTheSpot("14:40").setBus(Collections.singletonList("150"))
                     .build());
 
             departures.add(new Departure.Builder()
-                    .setFrom(from).setLeave("14:33").setDeparture("14:41")
+                    .setFrom(from)
+                    .setLeave("14:33").setDeparture("14:41")
                     .setArrival("14:47").setOnTheSpot("14:57").setBus(Collections.singletonList("D"))
                     .build());
         }
