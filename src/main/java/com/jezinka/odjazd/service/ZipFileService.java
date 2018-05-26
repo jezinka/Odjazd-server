@@ -1,15 +1,12 @@
 package com.jezinka.odjazd.service;
 
+import com.jezinka.odjazd.model.ServiceDay;
 import com.jezinka.odjazd.model.Stop;
 import com.jezinka.odjazd.model.StopTime;
 import com.jezinka.odjazd.model.Trip;
-import com.jezinka.odjazd.model.repository.StopRepository;
-import com.jezinka.odjazd.model.repository.StopTimeRepository;
-import com.jezinka.odjazd.model.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -28,20 +25,10 @@ import java.util.zip.ZipFile;
 @Service
 public class ZipFileService {
 
-    @Autowired
-    private StopRepository stopRepository;
-
-    @Autowired
-    private TripRepository tripRepository;
-
-    @Autowired
-    private StopTimeRepository stopTimeRepository;
-
     private EntityManagerFactory emf;
 
     @Autowired
     public ZipFileService(EntityManagerFactory emf) {
-        Assert.notNull(emf, "EntityManagerFactory must not be null");
         this.emf = emf;
     }
 
@@ -54,7 +41,7 @@ public class ZipFileService {
         br.readLine();
 
         Map<String, List<StopTime>> values = br.lines()
-                .map(s -> new StopTime(1, s.split(Const.SEPARATOR)))
+                .map(s -> new StopTime(s.split(Const.SEPARATOR)))
                 .collect(Collectors.groupingBy(StopTime::getTripId));
 
         List<String> routes = new ArrayList<>();
@@ -110,9 +97,15 @@ public class ZipFileService {
         return new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)));
     }
 
-    public void loadData() throws IOException {
-        String line;
+    public void saveData() throws IOException {
+        saveStopFromFile();
+        saveTripFromFile();
+        saveStopTimeFromFile();
+        saveCalendarsFromFile();
+    }
 
+    private void saveStopFromFile() throws IOException {
+        String line;
         BufferedReader stopBr = getFromZip(Const.STOPS_TXT);
         stopBr.readLine();
 
@@ -125,11 +118,14 @@ public class ZipFileService {
         }
         bulkWithEntityManager(stops);
         System.out.println("saved lines = " + counter);
+    }
 
+    private void saveTripFromFile() throws IOException {
+        String line;
         BufferedReader tripsBr = getFromZip(Const.TRIPS_TXT);
         tripsBr.readLine();
 
-        counter = 0;
+        int counter = 0;
         List<Trip> trips = new ArrayList<>();
         while ((line = tripsBr.readLine()) != null) {
             Trip trip = new Trip(line.split(Const.SEPARATOR));
@@ -138,19 +134,53 @@ public class ZipFileService {
         }
         bulkWithEntityManager(trips);
         System.out.println("saved lines = " + counter);
+    }
 
+    private void saveStopTimeFromFile() throws IOException {
+
+        String line;
         BufferedReader stopTimeBr = getFromZip(Const.STOP_TIMES_TXT);
         stopTimeBr.readLine();
 
-        counter = 0;
+        int counter = 0;
         List<StopTime> stopTimes = new ArrayList<>();
         while ((line = stopTimeBr.readLine()) != null) {
-            StopTime stopTime = new StopTime(counter, line.split(Const.SEPARATOR));
+            StopTime stopTime = new StopTime(line.split(Const.SEPARATOR));
             stopTimes.add(stopTime);
             counter++;
         }
         bulkWithEntityManager(stopTimes);
         System.out.println("saved lines = " + counter);
+    }
+
+    private void saveCalendarsFromFile() throws IOException {
+
+        String line;
+        BufferedReader calendarBr = getFromZip(Const.CALENDAR_TXT);
+        calendarBr.readLine();
+
+        List<ServiceDay> serviceDays = new ArrayList<>();
+        while ((line = calendarBr.readLine()) != null) {
+            serviceDays.addAll(transformIntoCalendars(line.split(Const.SEPARATOR)));
+        }
+
+        bulkWithEntityManager(serviceDays);
+    }
+
+    private List<ServiceDay> transformIntoCalendars(String[] splittedLine) {
+        List<ServiceDay> serviceDays = new ArrayList<>();
+
+        for (int x = 0; x < splittedLine.length; x++) {
+            if (splittedLine[x].equals("1")) {
+                ServiceDay serviceDay = new ServiceDay(splittedLine[0], getDayOfWeek(x));
+                serviceDays.add(serviceDay);
+            }
+        }
+        return serviceDays;
+    }
+
+    private int getDayOfWeek(int index) {
+        return index <= 6 ? index + 1 : 1;
     }
 
     private void bulkWithEntityManager(List<?> items) {

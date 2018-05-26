@@ -51,7 +51,7 @@ public class IndexController {
     @RequestMapping("/fillDatabase")
     public String fillDatabase() {
         try {
-            zipFileService.loadData();
+            zipFileService.saveData();
         } catch (IOException e) {
             return "There was an error!";
         }

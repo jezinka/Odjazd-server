@@ -8,6 +8,7 @@ public class Const {
 
     public static final String STOP_TIMES_TXT = "stop_times.txt";
     public static final String TRIPS_TXT = "trips.txt";
+    public static final String CALENDAR_TXT = "calendar.txt";
     public static final String STOPS_TXT = "stops.txt";
     public static final String STATIC_OTWARTY_WROCLAW_ROZKLAD_JAZDY_GTFS_ZIP = "/static/OtwartyWroclaw_rozklad_jazdy_GTFS.zip";
 
