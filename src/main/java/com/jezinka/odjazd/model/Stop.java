@@ -17,7 +17,7 @@ public class Stop {
     public Stop(String[] splittedLine) {
         this.id = Integer.parseInt(splittedLine[0]);
         this.code = splittedLine[1];
-        this.name = splittedLine[2];
+        this.name = splittedLine[2].replaceAll("\"", "");
     }
 
     @Override

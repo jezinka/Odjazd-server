@@ -1,16 +1,15 @@
 package com.jezinka.odjazd.controller;
 
-import com.jezinka.odjazd.model.Departure;
+import com.jezinka.odjazd.model.BusesToDaycare;
+import com.jezinka.odjazd.repository.BusesToDaycareRepository;
+import com.jezinka.odjazd.service.Const;
 import com.jezinka.odjazd.service.ZipFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -19,35 +18,20 @@ public class IndexController {
     @Autowired
     ZipFileService zipFileService;
 
+    @Autowired
+    BusesToDaycareRepository busesToDaycareRepository;
+
     @RequestMapping("/")
-    public List<Departure> index(@RequestParam(name = "from", required = false, defaultValue = "home") String from) {
-        List<Departure> departures = new ArrayList<>();
+    public List<BusesToDaycare> index() {
 
-        if (from.equals("work")) {
-            departures.add(new Departure.Builder()
-                    .setFrom(from)
-                    .setLeave("14:17")
-                    .setDeparture("14:20")
-                    .setArrival("14:55")
-                    .setOnTheSpot("14:57")
-                    .setBus(Arrays.asList("33", "331"))
-                    .setTransfer("Bujwida")
-                    .build());
+        return getBusesToDaycare();
+    }
 
-        } else {
-            departures.add(new Departure.Builder()
-                    .setFrom(from)
-                    .setLeave("14:21").setDeparture("14:30").setArrival("14:38")
-                    .setOnTheSpot("14:40").setBus(Collections.singletonList("150"))
-                    .build());
-
-            departures.add(new Departure.Builder()
-                    .setFrom(from)
-                    .setLeave("14:33").setDeparture("14:41")
-                    .setArrival("14:47").setOnTheSpot("14:57").setBus(Collections.singletonList("D"))
-                    .build());
-        }
-        return departures;
+    private List<BusesToDaycare> getBusesToDaycare() {
+        return busesToDaycareRepository.findBusesToDaycareByStartIdIsInAndEndIdIsInAndEndTimeBetween(
+                Arrays.asList(Const.OSIEDLE_SOBIESKIEGO_1, Const.OSIEDLE_SOBIESKIEGO_2),
+                Arrays.asList(Const.PSIE_POLE_RONDO, Const.MULICKA),
+                Const.START_INTERVAL, Const.END_INTERVAL);
     }
 
     @RequestMapping("/fillDatabase")

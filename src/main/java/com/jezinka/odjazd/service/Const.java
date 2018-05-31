@@ -1,5 +1,7 @@
 package com.jezinka.odjazd.service;
 
+import java.time.LocalTime;
+
 public class Const {
     public static final int OSIEDLE_SOBIESKIEGO_2 = 1946;
     public static final int OSIEDLE_SOBIESKIEGO_1 = 1945;
@@ -13,4 +15,7 @@ public class Const {
     public static final String STATIC_OTWARTY_WROCLAW_ROZKLAD_JAZDY_GTFS_ZIP = "/static/OtwartyWroclaw_rozklad_jazdy_GTFS.zip";
 
     public static final String SEPARATOR = ",";
+
+    public static final LocalTime START_INTERVAL = LocalTime.parse("14:45:00");
+    public static final LocalTime END_INTERVAL = LocalTime.parse("15:30:00");
 }
