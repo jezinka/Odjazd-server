@@ -4,7 +4,10 @@ import com.jezinka.odjazd.model.ServiceDay;
 import com.jezinka.odjazd.model.Stop;
 import com.jezinka.odjazd.model.StopTime;
 import com.jezinka.odjazd.model.Trip;
+import com.jezinka.odjazd.repository.ServiceDayRepository;
+import com.jezinka.odjazd.repository.StopRepository;
 import com.jezinka.odjazd.repository.StopTimeRepository;
+import com.jezinka.odjazd.repository.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,15 @@ public class ZipFileService {
     @Autowired
     StopTimeRepository stopTimeRepository;
 
+    @Autowired
+    StopRepository stopRepository;
+
+    @Autowired
+    ServiceDayRepository serviceDayRepository;
+
+    @Autowired
+    TripRepository tripRepository;
+
     private BufferedReader getFromZip(String fileName) throws IOException {
         ClassPathResource pathResource = new ClassPathResource(Const.STATIC_OTWARTY_WROCLAW_ROZKLAD_JAZDY_GTFS_ZIP);
 
@@ -43,10 +55,19 @@ public class ZipFileService {
     }
 
     public void saveData() throws IOException {
+        cleanTableData();
+
         saveCalendarsFromFile();
         saveStopFromFile();
         saveStopTimeFromFile();
         saveTripFromFile();
+    }
+
+    private void cleanTableData() {
+        stopTimeRepository.deleteAll();
+        serviceDayRepository.deleteAll();
+        stopRepository.deleteAll();
+        tripRepository.deleteAll();
     }
 
     private void saveStopFromFile() throws IOException {

@@ -34,8 +34,8 @@ public class IndexController {
                 Const.START_INTERVAL, Const.END_INTERVAL);
     }
 
-    @RequestMapping("/fillDatabase")
-    public String fillDatabase() {
+    @RequestMapping("/updateDatabase")
+    public String updateDatabase() {
         try {
             zipFileService.saveData();
         } catch (IOException e) {
