@@ -1,12 +1,16 @@
 package com.jezinka.odjazd.service;
 
 import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.List;
 
 public class Const {
     public static final int OSIEDLE_SOBIESKIEGO_2 = 1946;
     public static final int OSIEDLE_SOBIESKIEGO_1 = 1945;
     public static final int PSIE_POLE_RONDO = 3415;
     public static final int MULICKA = 3195;
+
+    public static final List<Integer> STOPS = Arrays.asList(OSIEDLE_SOBIESKIEGO_2, OSIEDLE_SOBIESKIEGO_1, PSIE_POLE_RONDO, MULICKA);
 
     public static final String STOP_TIMES_TXT = "stop_times.txt";
     public static final String TRIPS_TXT = "trips.txt";

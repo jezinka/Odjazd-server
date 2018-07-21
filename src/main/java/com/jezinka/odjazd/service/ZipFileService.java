@@ -4,6 +4,7 @@ import com.jezinka.odjazd.model.ServiceDay;
 import com.jezinka.odjazd.model.Stop;
 import com.jezinka.odjazd.model.StopTime;
 import com.jezinka.odjazd.model.Trip;
+import com.jezinka.odjazd.repository.StopTimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,16 @@ import java.util.zip.ZipFile;
 @Service
 public class ZipFileService {
 
+    private static final String RIDE_MARK = "1";
     private EntityManagerFactory emf;
 
     @Autowired
     public ZipFileService(EntityManagerFactory emf) {
         this.emf = emf;
     }
+
+    @Autowired
+    StopTimeRepository stopTimeRepository;
 
     private BufferedReader getFromZip(String fileName) throws IOException {
         ClassPathResource pathResource = new ClassPathResource(Const.STATIC_OTWARTY_WROCLAW_ROZKLAD_JAZDY_GTFS_ZIP);
@@ -38,10 +43,10 @@ public class ZipFileService {
     }
 
     public void saveData() throws IOException {
-        saveStopFromFile();
-        saveTripFromFile();
-        saveStopTimeFromFile();
         saveCalendarsFromFile();
+        saveStopFromFile();
+        saveStopTimeFromFile();
+        saveTripFromFile();
     }
 
     private void saveStopFromFile() throws IOException {
@@ -53,14 +58,18 @@ public class ZipFileService {
         List<Stop> stops = new ArrayList<>();
         while ((line = stopBr.readLine()) != null) {
             Stop stop = new Stop(line.split(Const.SEPARATOR));
-            stops.add(stop);
-            counter++;
+            if (Const.STOPS.contains(stop.getId())) {
+                stops.add(stop);
+                counter++;
+            }
         }
         bulkWithEntityManager(stops);
         System.out.println("saved lines = " + counter);
     }
 
     private void saveTripFromFile() throws IOException {
+        List<String> tripIds = stopTimeRepository.getAllTripIds();
+
         String line;
         BufferedReader tripsBr = getFromZip(Const.TRIPS_TXT);
         tripsBr.readLine();
@@ -69,8 +78,10 @@ public class ZipFileService {
         List<Trip> trips = new ArrayList<>();
         while ((line = tripsBr.readLine()) != null) {
             Trip trip = new Trip(line.split(Const.SEPARATOR));
-            trips.add(trip);
-            counter++;
+            if (tripIds.contains(trip.getId())) {
+                trips.add(trip);
+                counter++;
+            }
         }
         bulkWithEntityManager(trips);
         System.out.println("saved lines = " + counter);
@@ -86,8 +97,10 @@ public class ZipFileService {
         List<StopTime> stopTimes = new ArrayList<>();
         while ((line = stopTimeBr.readLine()) != null) {
             StopTime stopTime = new StopTime(line.split(Const.SEPARATOR));
-            stopTimes.add(stopTime);
-            counter++;
+            if (Const.STOPS.contains(stopTime.getStopId())) {
+                stopTimes.add(stopTime);
+                counter++;
+            }
         }
         bulkWithEntityManager(stopTimes);
         System.out.println("saved lines = " + counter);
@@ -111,7 +124,7 @@ public class ZipFileService {
         List<ServiceDay> serviceDays = new ArrayList<>();
 
         for (int x = 0; x < splittedLine.length; x++) {
-            if (splittedLine[x].equals("1")) {
+            if (splittedLine[x].equals(RIDE_MARK)) {
                 ServiceDay serviceDay = new ServiceDay(splittedLine[0], getDayOfWeek(x));
                 serviceDays.add(serviceDay);
             }

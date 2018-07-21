@@ -20,6 +20,10 @@ public class Stop {
         this.name = splittedLine[2].replaceAll("\"", "");
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "Stop{" +
